@@ -21,6 +21,7 @@ const GroupsList = lazy(() => import('@/features/groups/GroupsPage'))
 const GroupCreate = lazy(() => import('@/features/groups/GroupCreatePage'))
 const GroupEdit = lazy(() => import('@/features/groups/GroupEditPage'))
 const TransactionsList = lazy(() => import('@/features/transactions/TransactionsPage'))
+const ApiDocs = lazy(() => import('@/features/docs/ApiDocsPage'))
 
 function PageLoader() {
   return (
@@ -112,8 +113,15 @@ export default function AppRoutes() {
           path="/transactions"
           element={<Suspense fallback={<PageLoader />}><TransactionsList /></Suspense>}
         />
+
         </Route>
       </Route>
+
+      {/* Developer Docs (Unprotected) */}
+      <Route
+        path="/api-docs"
+        element={<Suspense fallback={<PageLoader />}><ApiDocs /></Suspense>}
+      />
     </Routes>
   )
 }
