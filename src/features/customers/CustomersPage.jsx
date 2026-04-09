@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { exportToExcel } from '@/lib/exportUtils'
 import { Users } from 'lucide-react'
 import { customerService } from '@/services/customerService'
 import { groupService } from '@/services/groupService'
@@ -70,6 +71,8 @@ export default function CustomersPage() {
         title="Customers"
         description={`${customers.length} member${customers.length !== 1 ? 's' : ''} enrolled`}
         action={{ label: 'Add Customer', to: '/customers/create' }}
+        onExport={() => exportToExcel(customers, columns, 'customers.xlsx')}
+        onPrint={() => window.print()}
       />
       <DataTableLayout
         columns={columns}

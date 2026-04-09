@@ -17,10 +17,10 @@ export default function DataTableLayout({
   className,
 }) {
   return (
-    <div className={cn('bg-card rounded-2xl border border-border shadow-sm', className)}>
+    <div className={cn('bg-card rounded-2xl border border-border shadow-sm print:border-none print:shadow-none', className)}>
       {/* Toolbar */}
       {(onSearchChange || filterSlot) && (
-        <div className="flex flex-wrap items-center gap-3 p-4 border-b border-border">
+        <div className="flex flex-wrap items-center gap-3 p-4 border-b border-border print:hidden">
           {onSearchChange && (
             <div className="relative flex-1 min-w-[200px] max-w-sm">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
@@ -38,7 +38,7 @@ export default function DataTableLayout({
       )}
 
       {/* Table */}
-      <div className="overflow-x-auto p-4">
+      <div className="overflow-x-auto p-4 print:overflow-visible print:w-full print:p-0">
         {loading ? (
           <TableSkeleton rows={5} cols={columns?.length || 5} />
         ) : !data || data.length === 0 ? (

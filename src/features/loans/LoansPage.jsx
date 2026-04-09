@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { exportToExcel } from '@/lib/exportUtils'
 import { CreditCard } from 'lucide-react'
 import { loanService } from '@/services/loanService'
 import { groupService } from '@/services/groupService'
@@ -92,6 +93,8 @@ export default function LoansPage() {
         title="Loans"
         description={`${loans.length} loan records`}
         action={{ label: 'Add Loan', to: '/loans/create' }}
+        onExport={() => exportToExcel(loans, columns, 'loans.xlsx')}
+        onPrint={() => window.print()}
       />
       <DataTableLayout
         columns={columns}

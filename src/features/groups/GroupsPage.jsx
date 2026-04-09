@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { exportToExcel } from '@/lib/exportUtils'
 import { UsersRound } from 'lucide-react'
 import { groupService } from '@/services/groupService'
 import DataTableLayout from '@/components/shared/DataTableLayout'
@@ -69,6 +70,8 @@ export default function GroupsPage() {
         title="Groups"
         description={`${groups.length} self-help group${groups.length !== 1 ? 's' : ''}`}
         action={{ label: 'Add Group', to: '/groups/create' }}
+        onExport={() => exportToExcel(groups, columns, 'groups.xlsx')}
+        onPrint={() => window.print()}
       />
       <DataTableLayout
         columns={columns}

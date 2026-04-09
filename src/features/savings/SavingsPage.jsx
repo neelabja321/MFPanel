@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
+import { exportToExcel } from '@/lib/exportUtils'
 import { PiggyBank, TrendingUp, TrendingDown } from 'lucide-react'
 import { savingsService } from '@/services/savingsService'
 import { customerService } from '@/services/customerService'
@@ -59,6 +60,8 @@ export default function SavingsPage() {
         title="Savings"
         description="Member savings accounts"
         action={{ label: 'Open Account', to: '/savings/create' }}
+        onExport={() => exportToExcel(savings, columns, 'savings.xlsx')}
+        onPrint={() => window.print()}
       />
 
       {/* Summary Card */}

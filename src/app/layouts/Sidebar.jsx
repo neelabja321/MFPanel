@@ -2,12 +2,15 @@ import { NavLink } from 'react-router-dom'
 import {
   LayoutDashboard,
   Users,
+  TrendingUp,
   CreditCard,
   PiggyBank,
   UsersRound,
-  ArrowLeftRight,
+  HelpCircle,
+  Menu,
   ChevronLeft,
-  Landmark,
+  UserCog,
+  ArrowLeftRight,
 } from 'lucide-react'
 import { useUIStore } from '@/store'
 import { cn } from '@/lib/utils'
@@ -19,6 +22,7 @@ const navItems = [
   { to: '/savings', icon: PiggyBank, label: 'Savings' },
   { to: '/groups', icon: UsersRound, label: 'Groups' },
   { to: '/transactions', icon: ArrowLeftRight, label: 'Transactions' },
+  { to: '/users', icon: UserCog, label: 'Users & Roles' },
 ]
 
 export default function Sidebar() {
@@ -35,19 +39,19 @@ export default function Sidebar() {
       )}
       <aside
         className={cn(
-          'absolute md:relative z-40 h-screen bg-sidebar text-sidebar-foreground flex flex-col transition-all duration-300 ease-in-out shrink-0',
+          'absolute md:relative z-40 h-screen bg-sidebar text-sidebar-foreground flex flex-col transition-all duration-300 ease-in-out shrink-0 print:hidden',
           sidebarOpen ? 'w-64 translate-x-0' : '-translate-x-full md:translate-x-0 md:w-16'
         )}
       >
       {/* Logo */}
-      <div className="flex items-center gap-3 px-4 py-5 border-b border-sidebar-border">
-        <div className="flex items-center justify-center w-9 h-9 rounded-xl bg-sidebar-primary shrink-0">
-          <Landmark className="w-5 h-5 text-white" />
+      <div className="h-20 flex items-center gap-4 px-6 shrink-0 pt-2 pb-2">
+        <div className="w-12 h-12 rounded-2xl bg-white shadow-sm flex items-center justify-center overflow-hidden shrink-0 border border-border">
+          <img src="/logo.png" alt="FinanceOrbit Logo" className="w-full h-full object-cover" />
         </div>
         {sidebarOpen && (
-          <div className="overflow-hidden">
-            <p className="font-bold text-white text-sm leading-tight">MF Admin</p>
-            <p className="text-xs text-sidebar-foreground/60 leading-tight">Microfinance Panel</p>
+          <div className="overflow-hidden flex flex-col justify-center">
+            <p className="font-bold text-white text-lg leading-tight tracking-tight">FinanceOrbit</p>
+            <p className="text-[11px] text-blue-200/80 font-medium tracking-wide uppercase mt-0.5">Microfinance</p>
           </div>
         )}
       </div>

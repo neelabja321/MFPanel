@@ -21,6 +21,9 @@ const GroupsList = lazy(() => import('@/features/groups/GroupsPage'))
 const GroupCreate = lazy(() => import('@/features/groups/GroupCreatePage'))
 const GroupEdit = lazy(() => import('@/features/groups/GroupEditPage'))
 const TransactionsList = lazy(() => import('@/features/transactions/TransactionsPage'))
+const UsersList = lazy(() => import('@/features/users/UsersPage'))
+const UserCreate = lazy(() => import('@/features/users/UserCreatePage'))
+const UserEdit = lazy(() => import('@/features/users/UserEditPage'))
 const ApiDocs = lazy(() => import('@/features/docs/ApiDocsPage'))
 
 function PageLoader() {
@@ -114,6 +117,19 @@ export default function AppRoutes() {
           element={<Suspense fallback={<PageLoader />}><TransactionsList /></Suspense>}
         />
 
+        {/* Users */}
+        <Route
+          path="/users"
+          element={<Suspense fallback={<PageLoader />}><UsersList /></Suspense>}
+        />
+        <Route
+          path="/users/create"
+          element={<Suspense fallback={<PageLoader />}><UserCreate /></Suspense>}
+        />
+        <Route
+          path="/users/:id/edit"
+          element={<Suspense fallback={<PageLoader />}><UserEdit /></Suspense>}
+        />
         </Route>
       </Route>
 

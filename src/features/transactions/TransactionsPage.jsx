@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useQuery } from '@tanstack/react-query'
+import { exportToExcel } from '@/lib/exportUtils'
 import { ArrowLeftRight, ArrowDownCircle, ArrowUpCircle, Receipt } from 'lucide-react'
 import { transactionService } from '@/services/transactionService'
 import { groupService } from '@/services/groupService'
@@ -85,7 +86,12 @@ export default function TransactionsPage() {
 
   return (
     <div className="animate-fade-in space-y-6">
-      <PageHeader title="Transactions" description="All financial activity" />
+      <PageHeader 
+        title="Transactions" 
+        description="All financial activity" 
+        onExport={() => exportToExcel(transactions, columns, 'transactions.xlsx')}
+        onPrint={() => window.print()}
+      />
 
       {/* Summary Banner */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
