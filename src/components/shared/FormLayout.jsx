@@ -1,3 +1,4 @@
+import { forwardRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { cn } from '@/lib/utils'
 
@@ -57,9 +58,10 @@ export function FormField({ label, error, required, children, hint }) {
   )
 }
 
-export function FormInput({ error, className, ...props }) {
+export const FormInput = forwardRef(({ error, className, ...props }, ref) => {
   return (
     <input
+      ref={ref}
       className={cn(
         'w-full px-3 py-2 text-sm rounded-xl border border-input bg-background focus:outline-none focus:ring-2 focus:ring-ring transition-shadow',
         error && 'border-destructive focus:ring-destructive/30',
@@ -68,11 +70,13 @@ export function FormInput({ error, className, ...props }) {
       {...props}
     />
   )
-}
+})
+FormInput.displayName = 'FormInput'
 
-export function FormSelect({ error, className, children, ...props }) {
+export const FormSelect = forwardRef(({ error, className, children, ...props }, ref) => {
   return (
     <select
+      ref={ref}
       className={cn(
         'w-full px-3 py-2 text-sm rounded-xl border border-input bg-background focus:outline-none focus:ring-2 focus:ring-ring transition-shadow',
         error && 'border-destructive focus:ring-destructive/30',
@@ -83,11 +87,13 @@ export function FormSelect({ error, className, children, ...props }) {
       {children}
     </select>
   )
-}
+})
+FormSelect.displayName = 'FormSelect'
 
-export function FormTextarea({ error, className, ...props }) {
+export const FormTextarea = forwardRef(({ error, className, ...props }, ref) => {
   return (
     <textarea
+      ref={ref}
       rows={3}
       className={cn(
         'w-full px-3 py-2 text-sm rounded-xl border border-input bg-background focus:outline-none focus:ring-2 focus:ring-ring transition-shadow resize-none',
@@ -97,4 +103,5 @@ export function FormTextarea({ error, className, ...props }) {
       {...props}
     />
   )
-}
+})
+FormTextarea.displayName = 'FormTextarea'
