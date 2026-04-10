@@ -17,6 +17,7 @@ const routeLabels = {
 export default function Header() {
   const { toggleSidebar, theme, toggleTheme } = useUIStore()
   const logout = useAuthStore((s) => s.logout)
+  const user = useAuthStore((s) => s.user)
   const location = useLocation()
   const navigate = useNavigate()
 
@@ -65,11 +66,11 @@ export default function Header() {
         </button>
         <div className="flex items-center gap-2 pl-3 border-l border-border">
           <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-white text-sm font-semibold select-none">
-            A
+            {user?.name?.charAt(0)?.toUpperCase() || 'U'}
           </div>
           <div className="hidden sm:block">
-            <p className="text-sm font-medium text-foreground leading-tight">Admin</p>
-            <p className="text-xs text-muted-foreground leading-tight">Manager</p>
+            <p className="text-sm font-medium text-foreground leading-tight">{user?.name || 'User'}</p>
+            <p className="text-xs text-muted-foreground leading-tight">{user?.isAdmin ? 'Admin' : 'Staff'}</p>
           </div>
           <button 
             onClick={handleLogout}

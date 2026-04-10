@@ -4,29 +4,35 @@ import { Lock, ArrowRight, ShieldCheck, PieChart, Activity } from 'lucide-react'
 import { useAuthStore } from '@/store'
 import { FormField, FormInput } from '@/components/shared/FormLayout'
 import { cn } from '@/lib/utils'
+import { authService } from '@/services/authService'
 
 export default function LoginPage() {
-  const [username, setUsername] = useState('')
+  const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
   const navigate = useNavigate()
-  const login = useAuthStore((s) => s.login)
+  const setAuth = useAuthStore((s) => s.setAuth)
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
     setError('')
     setLoading(true)
 
-    // Simulate network delay
-    setTimeout(() => {
-      if (login(username, password)) {
+    try {
+      const response = await authService.login(email, password)
+      
+      if (response.status === 'success') {
+        setAuth(response.user, response.authorization.token)
         navigate('/')
       } else {
-        setError('Invalid credentials (try: admin / admin123)')
+        setError('Invalid credentials. Please try again.')
       }
+    } catch (err) {
+      setError(err.response?.data?.message || 'Login failed. Please check your credentials and network connection.')
+    } finally {
       setLoading(false)
-    }, 600)
+    }
   }
 
   return (
@@ -97,15 +103,15 @@ export default function LoginPage() {
 
           <div className="bg-white py-8 px-6 sm:px-10 rounded-3xl shadow-xl shadow-slate-200/50 border border-slate-100">
             <form className="space-y-6" onSubmit={handleSubmit}>
-              <FormField label="Username" required>
+              <FormField label="Email Address" required>
                 <FormInput
-                  id="username"
-                  type="text"
-                  value={username}
-                  onChange={(e) => setUsername(e.target.value)}
-                  placeholder="admin"
+                  id="email"
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="name@example.com"
                   className="rounded-xl border-slate-200 focus:border-primary focus:ring-primary h-12 text-black"
-                  autoComplete="username"
+                  autoComplete="email"
                   required
                 />
               </FormField>
@@ -140,10 +146,10 @@ export default function LoginPage() {
 
               <button
                 type="submit"
-                disabled={loading || !username || !password}
+                disabled={loading || !email || !password}
                 className={cn(
                   'group w-full flex items-center justify-center gap-2 py-3.5 px-4 rounded-xl shadow-sm text-sm font-semibold text-white bg-primary hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-all duration-200',
-                  (loading || !username || !password) && 'opacity-60 cursor-not-allowed hover:bg-primary'
+                  (loading || !email || !password) && 'opacity-60 cursor-not-allowed hover:bg-primary'
                 )}
               >
                 {loading ? 'Authenticating...' : 'Sign In'}
