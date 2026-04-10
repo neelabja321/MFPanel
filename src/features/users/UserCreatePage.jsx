@@ -91,7 +91,9 @@ export default function UserCreatePage() {
         
         {mutation.isError && (
           <div className="mt-4 p-3 bg-red-50 text-red-600 rounded-lg text-sm">
-            {mutation.error?.response?.data?.message || mutation.error?.message || "Failed to create user."}
+            {mutation.error?.response?.data?.errors 
+              ? Object.values(mutation.error.response.data.errors).flat().join(', ') 
+              : (mutation.error?.response?.data?.message || mutation.error?.message || "Failed to create user.")}
           </div>
         )}
       </FormLayout>
