@@ -1,67 +1,32 @@
-import { users, setUsers } from '../mock-data/users'
-
-const delay = (ms = 500) => new Promise((resolve) => setTimeout(resolve, ms))
+import api from './api'
 
 export const userService = {
-  async getAll({ search = '', role = '', status = '' } = {}) {
-    await delay()
-    let filtered = [...users]
-
-    if (search) {
-      const lowerSearch = search.toLowerCase()
-      filtered = filtered.filter(
-        (u) =>
-          u.name.toLowerCase().includes(lowerSearch) ||
-          u.email.toLowerCase().includes(lowerSearch) ||
-          u.id.toLowerCase().includes(lowerSearch)
-      )
-    }
-
-    if (role) {
-      filtered = filtered.filter((u) => u.role === role)
-    }
-
-    if (status) {
-      filtered = filtered.filter((u) => u.status === status)
-    }
-
-    return filtered.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+  async getAll() {
+    // API returns { status: "success", data: [...] }
+    const response = await api.get('users')
+    return response.data.data
   },
 
   async getById(id) {
-    await delay()
-    const user = users.find((u) => u.id === id)
-    if (!user) throw new Error('User not found')
-    return user
+    // For when you view/edit a user specifically. Assuming restful /users/{id}
+    const response = await api.get(`users/${id}`)
+    // Fallback if backend does not wrap in { data: ... } structure for singles
+    return response.data.data || response.data
   },
 
   async create(data) {
-    await delay()
-    const newUser = {
-      id: `U${String(users.length + 1).padStart(3, '0')}`,
-      ...data,
-      createdAt: new Date().toISOString(),
-    }
-    setUsers([...users, newUser])
-    return newUser
+    // Payload should match API contract
+    const response = await api.post('auth/register', data)
+    return response.data
   },
 
   async update(id, data) {
-    await delay()
-    const index = users.findIndex((u) => u.id === id)
-    if (index === -1) throw new Error('User not found')
-    
-    const updatedUser = { ...users[index], ...data }
-    const newUsers = [...users]
-    newUsers[index] = updatedUser
-    setUsers(newUsers)
-    return updatedUser
+    const response = await api.put(`users/${id}`, data)
+    return response.data
   },
 
   async delete(id) {
-    await delay()
-    const newUsers = users.filter((u) => u.id !== id)
-    setUsers(newUsers)
-    return { success: true }
+    const response = await api.delete(`users/${id}`)
+    return response.data
   },
 }

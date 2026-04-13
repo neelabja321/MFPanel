@@ -27,15 +27,18 @@ export const useFilterStore = create((set) => ({
 }))
 
 export const useAuthStore = create((set) => ({
-  isAuthenticated: false,
-  user: null,
-  login: (username, password) => {
-    // Static validation for now
-    if (username === 'admin' && password === 'admin123') {
-      set({ isAuthenticated: true, user: { name: 'Admin', role: 'Manager' } })
-      return true
-    }
-    return false
+  isAuthenticated: !!localStorage.getItem('authToken'),
+  user: JSON.parse(localStorage.getItem('authUser') || 'null'),
+  
+  setAuth: (user, token) => {
+    localStorage.setItem('authToken', token)
+    localStorage.setItem('authUser', JSON.stringify(user))
+    set({ isAuthenticated: true, user })
   },
-  logout: () => set({ isAuthenticated: false, user: null }),
+  
+  logout: () => {
+    localStorage.removeItem('authToken')
+    localStorage.removeItem('authUser')
+    set({ isAuthenticated: false, user: null })
+  },
 }))
