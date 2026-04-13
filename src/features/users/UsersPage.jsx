@@ -81,7 +81,6 @@ export default function UsersPage() {
             <table>
               <thead>
                 <tr>
-                  <th>ID</th>
                   <th>Name</th>
                   <th>Email</th>
                   <th>Mobile</th>
@@ -94,7 +93,6 @@ export default function UsersPage() {
               <tbody>
                 ${serverData.map(u => `
                   <tr>
-                    <td>${u.userId}</td>
                     <td>${u.name}</td>
                     <td>${u.email}</td>
                     <td>${u.mobile || '-'}</td>
@@ -125,7 +123,6 @@ export default function UsersPage() {
   }
 
   const columns = [
-    { key: 'userId', label: 'ID', width: 60 },
     {
       key: 'name',
       label: 'Staff Member',

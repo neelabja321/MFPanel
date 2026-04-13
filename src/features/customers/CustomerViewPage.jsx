@@ -28,10 +28,12 @@ export default function CustomerViewPage() {
   const { id } = useParams()
   const navigate = useNavigate()
 
-  const { data: customer, isLoading } = useQuery({
+  const { data: customerResponse, isLoading } = useQuery({
     queryKey: ['customer', id],
-    queryFn: () => customerService.getById(id),
+    queryFn: () => customerService.getCustomerById(id),
   })
+
+  const customer = customerResponse?.data
 
   const { data: groups = [] } = useQuery({
     queryKey: ['groups-options'],
@@ -70,15 +72,15 @@ export default function CustomerViewPage() {
               <User className="w-8 h-8 text-primary" />
             </div>
             <div>
-              <h3 className="text-xl font-bold text-foreground">{customer.name}</h3>
-              <StatusBadge status={customer.status} className="mt-1" />
+              <h3 className="text-xl font-bold text-foreground">{customer.full_name || customer.name}</h3>
+              <StatusBadge status={customer.status || 'active'} className="mt-1" />
             </div>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-            <InfoCard icon={Phone} label="Phone" value={customer.phone} />
-            <InfoCard icon={Calendar} label="Joined" value={formatDate(customer.joinDate)} />
+            <InfoCard icon={Phone} label="Phone" value={customer.phone_number || customer.phone} />
+            <InfoCard icon={Calendar} label="Joined" value={formatDate(customer.created_at || customer.joinDate || new Date())} />
             <InfoCard icon={MapPin} label="Address" value={customer.address} />
-            <InfoCard icon={CreditCard} label={`${customer.idProof}`} value={customer.idNumber} />
+            <InfoCard icon={CreditCard} label={`${customer.id_proof_type || customer.idProof || 'ID'}`} value={customer.id_proof_number || customer.idNumber} />
             <InfoCard icon={Users} label="Group" value={groupLabel} />
           </div>
         </div>

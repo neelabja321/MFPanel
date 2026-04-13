@@ -7,9 +7,9 @@ import { CardSkeleton } from '@/components/shared/SkeletonLoaders'
 
 // Lazy-loaded pages
 const Dashboard = lazy(() => import('@/features/dashboard/DashboardPage'))
-const CustomersList = lazy(() => import('@/features/customers/CustomersPage'))
-const CustomerCreate = lazy(() => import('@/features/customers/CustomerCreatePage'))
-const CustomerEdit = lazy(() => import('@/features/customers/CustomerEditPage'))
+const CustomersList = lazy(() => import('@/pages/Customer/List'))
+const CustomerCreate = lazy(() => import('@/pages/Customer/Create'))
+const CustomerEdit = lazy(() => import('@/pages/Customer/Edit'))
 const CustomerView = lazy(() => import('@/features/customers/CustomerViewPage'))
 const LoansList = lazy(() => import('@/features/loans/LoansPage'))
 const LoanCreate = lazy(() => import('@/features/loans/LoanCreatePage'))
