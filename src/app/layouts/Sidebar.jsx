@@ -11,6 +11,7 @@ import {
   ChevronLeft,
   UserCog,
   ArrowLeftRight,
+  Shield,
 } from 'lucide-react'
 import { useUIStore } from '@/store'
 import { cn } from '@/lib/utils'
@@ -22,7 +23,8 @@ const navItems = [
   { to: '/savings', icon: PiggyBank, label: 'Savings' },
   { to: '/groups', icon: UsersRound, label: 'Groups' },
   { to: '/transactions', icon: ArrowLeftRight, label: 'Transactions' },
-  { to: '/users', icon: UserCog, label: 'Users & Roles' },
+  { to: '/users', icon: UserCog, label: 'Users' },
+  { to: '/roles', icon: Shield, label: 'Roles Matrix' },
 ]
 
 export default function Sidebar() {

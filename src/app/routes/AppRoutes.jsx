@@ -24,6 +24,9 @@ const TransactionsList = lazy(() => import('@/features/transactions/Transactions
 const UsersList = lazy(() => import('@/features/users/UsersPage'))
 const UserCreate = lazy(() => import('@/features/users/UserCreatePage'))
 const UserEdit = lazy(() => import('@/features/users/UserEditPage'))
+const RolesList = lazy(() => import('@/pages/Role/List'))
+const RoleCreate = lazy(() => import('@/pages/Role/Create'))
+const RoleEdit = lazy(() => import('@/pages/Role/Edit'))
 const ApiDocs = lazy(() => import('@/features/docs/ApiDocsPage'))
 
 function PageLoader() {
@@ -129,6 +132,20 @@ export default function AppRoutes() {
         <Route
           path="/users/:id/edit"
           element={<Suspense fallback={<PageLoader />}><UserEdit /></Suspense>}
+        />
+
+        {/* Roles */}
+        <Route
+          path="/roles"
+          element={<Suspense fallback={<PageLoader />}><RolesList /></Suspense>}
+        />
+        <Route
+          path="/roles/create"
+          element={<Suspense fallback={<PageLoader />}><RoleCreate /></Suspense>}
+        />
+        <Route
+          path="/roles/:id/edit"
+          element={<Suspense fallback={<PageLoader />}><RoleEdit /></Suspense>}
         />
         </Route>
       </Route>

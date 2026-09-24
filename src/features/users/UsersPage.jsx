@@ -166,8 +166,8 @@ export default function UsersPage() {
   return (
     <div className="animate-fade-in">
       <PageHeader
-        title="Users & Roles"
-        description="Manage system access and staff roles"
+        title="System Users"
+        description="Manage system users and access levels"
         action={{ label: 'Add User', to: '/users/create' }}
         onExport={() => exportToExcel(users, columns, 'users.xlsx')}
         onPrint={handlePrint}
