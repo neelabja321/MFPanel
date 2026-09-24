@@ -1,6 +1,7 @@
 import { useState, useMemo } from 'react'
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { ShieldAlert, Shield } from 'lucide-react'
+import { useNavigate } from 'react-router-dom'
+import { useQuery } from '@tanstack/react-query'
+import { Shield, ShieldCheck } from 'lucide-react'
 import { roleService } from '@/services/roleService'
 import DataTableLayout from '@/components/shared/DataTableLayout'
 import PageHeader from '@/components/shared/PageHeader'
@@ -9,7 +10,7 @@ import { formatDate } from '@/lib/utils'
 
 export default function RolesList() {
   const [search, setSearch] = useState('')
-  const queryClient = useQueryClient()
+  const navigate = useNavigate()
 
   // Assuming roleService.getAll() returns an array of roles.
   // Fallback to empty array to handle any differences in response shape.
@@ -69,9 +70,18 @@ export default function RolesList() {
     {
       key: 'actions',
       label: '',
-      width: 60,
+      width: 110,
       render: (_, row) => (
-        <ActionButtons editTo={`/roles/${row.roleId}/edit`} onDelete={undefined} />
+        <div className="flex items-center justify-end gap-1">
+          <button
+            title="Set up access matrix"
+            onClick={() => navigate(`/roles/${row.roleId}/access`)}
+            className="p-1.5 rounded-lg text-muted-foreground hover:bg-primary/10 hover:text-primary transition-colors"
+          >
+            <ShieldCheck className="w-4 h-4" />
+          </button>
+          <ActionButtons editTo={`/roles/${row.roleId}/edit`} onDelete={undefined} />
+        </div>
       ),
     },
   ]
