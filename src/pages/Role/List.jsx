@@ -27,7 +27,9 @@ export default function RolesList() {
       const lower = search.toLowerCase()
       result = result.filter(r => r.role?.toLowerCase().includes(lower))
     }
-    return result.sort((a, b) => new Date(b.createdDtm || 0) - new Date(a.createdDtm || 0))
+    // Sort by roleId descending (newest roles have the highest IDs).
+    // createdDtm is unreliable here — some records carry placeholder dates.
+    return [...result].sort((a, b) => (b.roleId || 0) - (a.roleId || 0))
   }, [rolesData, search])
 
   // Optional: add a mock delete if the API doesn't exist, here. 
@@ -39,6 +41,16 @@ export default function RolesList() {
       key: 'role',
       label: 'Role Name',
       render: (v) => <span className="font-medium text-foreground">{v}</span>,
+    },
+    {
+      key: 'level',
+      label: 'Level',
+      width: 80,
+      render: (v) => (
+        <span className="inline-flex items-center justify-center min-w-[1.5rem] px-2 py-0.5 text-xs font-semibold rounded-md bg-muted text-muted-foreground">
+          {v ?? '-'}
+        </span>
+      ),
     },
     { 
       key: 'status', 
@@ -53,7 +65,7 @@ export default function RolesList() {
         </span>
       ),
     },
-    { key: 'createdDtm', label: 'Updated', render: (v) => formatDate(v) },
+    { key: 'createdDtm', label: 'Created', render: (v) => formatDate(v) },
     {
       key: 'actions',
       label: '',

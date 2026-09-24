@@ -16,11 +16,14 @@ export function formatCurrency(amount) {
 
 export function formatDate(dateStr) {
   if (!dateStr) return '-'
+  const date = new Date(dateStr)
+  // Guard against invalid or placeholder dates (e.g. "-000001-11-30...").
+  if (isNaN(date.getTime()) || date.getFullYear() < 1900) return '-'
   return new Intl.DateTimeFormat('en-IN', {
     day: '2-digit',
     month: 'short',
     year: 'numeric',
-  }).format(new Date(dateStr))
+  }).format(date)
 }
 
 export function delay(ms = 600) {
