@@ -8,6 +8,7 @@ import PageHeader from '@/components/shared/PageHeader'
 import StatusBadge from '@/components/shared/StatusBadge'
 import ActionButtons from '@/components/shared/ActionButtons'
 import { formatCurrency, formatDate } from '@/lib/utils'
+import { MODULES } from '@/lib/accessControl'
 
 export default function GroupsPage() {
   const [search, setSearch] = useState('')
@@ -57,6 +58,7 @@ export default function GroupsPage() {
       width: 80,
       render: (_, row) => (
         <ActionButtons
+          module={MODULES.GROUP}
           editTo={`/groups/${row.id}/edit`}
           onDelete={() => deleteMutation.mutateAsync(row.id)}
         />
@@ -69,7 +71,7 @@ export default function GroupsPage() {
       <PageHeader
         title="Groups"
         description={`${groups.length} self-help group${groups.length !== 1 ? 's' : ''}`}
-        action={{ label: 'Add Group', to: '/groups/create' }}
+        action={{ label: 'Add Group', to: '/groups/create', module: MODULES.GROUP }}
         onExport={() => exportToExcel(groups, columns, 'groups.xlsx')}
         onPrint={() => window.print()}
       />

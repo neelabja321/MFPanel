@@ -7,6 +7,7 @@ import { customerService } from '@/services/customerService'
 import DataTableLayout from '@/components/shared/DataTableLayout'
 import PageHeader from '@/components/shared/PageHeader'
 import ActionButtons from '@/components/shared/ActionButtons'
+import { MODULES } from '@/lib/accessControl'
 
 export default function CustomerList() {
   const [search, setSearch] = useState('')
@@ -19,7 +20,7 @@ export default function CustomerList() {
     queryFn: () => customerService.getCustomers(),
   })
 
-  const customers = response?.data || []
+  const customers = useMemo(() => response?.data || [], [response])
 
   // Basic client-side searching & sorting since server-side might not be fully requested/specified
   const processedData = useMemo(() => {
@@ -165,6 +166,7 @@ export default function CustomerList() {
       width: 100,
       render: (_, row) => (
         <ActionButtons
+          module={MODULES.CUSTOMER}
           editTo={`/customers/${row.customer_id}/edit`}
           onDelete={async () => {
              // In lieu of checking ConfirmDialog which we assume is wired in DataTableLayout or ActionButtons
@@ -190,7 +192,7 @@ export default function CustomerList() {
       <PageHeader
         title="Customers"
         description={`${processedData.length} total customer(s)`}
-        action={{ label: 'Add Customer', to: '/customers/create' }}
+        action={{ label: 'Add Customer', to: '/customers/create', module: MODULES.CUSTOMER }}
         onExport={() => exportToExcel(processedData, columns, 'customers.xlsx')}
         onPrint={handlePrint}
       />

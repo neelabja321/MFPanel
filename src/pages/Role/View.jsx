@@ -16,10 +16,14 @@ import {
   countEnabledModules,
 } from '@/lib/accessMatrix'
 import { formatDate, getApiError } from '@/lib/utils'
+import { useAuthStore } from '@/store'
+import { canAccess, MODULES, PERMISSIONS } from '@/lib/accessControl'
 
 export default function RoleView() {
   const { id } = useParams()
   const navigate = useNavigate()
+  const permissions = useAuthStore((state) => state.permissions)
+  const mayEdit = canAccess(permissions, MODULES.ADMINISTRATOR, PERMISSIONS.EDIT)
 
   const {
     data: matrixData,
@@ -68,7 +72,8 @@ export default function RoleView() {
           </h1>
           <p className="text-muted-foreground mt-1">Role details and module permissions</p>
         </div>
-        <div className="flex items-center gap-2">
+        {mayEdit && (
+          <div className="flex items-center gap-2">
           <Link
             to={`/roles/${id}/edit`}
             className="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium text-muted-foreground bg-secondary hover:bg-secondary/80 transition-colors"
@@ -83,7 +88,8 @@ export default function RoleView() {
             <SlidersHorizontal className="w-4 h-4" />
             Edit Access Matrix
           </Link>
-        </div>
+          </div>
+        )}
       </div>
 
       <div className="bg-card border border-border rounded-2xl p-6 shadow-sm">

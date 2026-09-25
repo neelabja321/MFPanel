@@ -7,7 +7,7 @@ import PageHeader from '@/components/shared/PageHeader'
 import StatusBadge from '@/components/shared/StatusBadge'
 import { formatCurrency, formatDate } from '@/lib/utils'
 import { FormSkeleton } from '@/components/shared/SkeletonLoaders'
-import { CreditCard } from 'lucide-react'
+import { MODULES } from '@/lib/accessControl'
 
 function StatCard({ label, value, sub, highlight }) {
   return (
@@ -39,7 +39,7 @@ export default function LoanViewPage() {
         title={`Loan: ${loan.id}`}
         description={`${customer?.name || loan.customerId} — ${group?.label || loan.groupId}`}
         backTo="/loans"
-        action={{ label: 'Edit', to: `/loans/${id}/edit` }}
+        action={{ label: 'Edit', to: `/loans/${id}/edit`, module: MODULES.LOAN, permission: 'edit_records' }}
       />
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         <StatCard label="Loan Amount" value={formatCurrency(loan.amount)} />

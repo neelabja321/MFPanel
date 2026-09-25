@@ -1,9 +1,15 @@
 import { useNavigate } from 'react-router-dom'
 import { ArrowLeft, Plus, Download, Printer } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { useAuthStore } from '@/store'
+import { canAccess } from '@/lib/accessControl'
 
 export default function PageHeader({ title, description, action, backTo, onExport, onPrint, className }) {
   const navigate = useNavigate()
+  const permissions = useAuthStore((state) => state.permissions)
+  const showAction = action && (
+    !action.module || canAccess(permissions, action.module, action.permission || 'create_records')
+  )
 
   return (
     <div className={cn('flex items-start justify-between mb-6', className)}>
@@ -32,7 +38,7 @@ export default function PageHeader({ title, description, action, backTo, onExpor
              <Download className="w-4 h-4" />
            </button>
         )}
-        {action && (
+        {showAction && (
           <button
             onClick={action.onClick || (() => navigate(action.to))}
             className="flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-xl text-sm font-medium hover:bg-primary/90 transition-colors shadow-sm ml-2 shrink-0"

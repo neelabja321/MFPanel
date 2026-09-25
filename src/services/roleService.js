@@ -73,14 +73,14 @@ export const roleService = {
     return response.data
   },
 
-  async getAccessMatrix(roleId) {
+  async getAccessMatrix(roleId, { allowCache = true } = {}) {
     try {
       const response = await api.get(`access-matrix/role/${roleId}`)
       const payload = response.data?.data ?? response.data
       const access = validateAccessMatrix(payload)
 
       if (!access) {
-        const cached = getCachedRoleAccessMatrix(roleId)
+        const cached = allowCache ? getCachedRoleAccessMatrix(roleId) : null
         if (cached) {
           return {
             access: cached.access,
@@ -101,7 +101,7 @@ export const roleService = {
       // baseline so view/edit remain usable without inventing permissions.
       const status = error.response?.status
       const mayUseCache = !status || status >= 500 || error.isInvalidMatrixResponse
-      const cached = mayUseCache ? getCachedRoleAccessMatrix(roleId) : null
+      const cached = mayUseCache && allowCache ? getCachedRoleAccessMatrix(roleId) : null
       if (!cached) throw error
 
       return {

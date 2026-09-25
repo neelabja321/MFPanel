@@ -9,6 +9,7 @@ import PageHeader from '@/components/shared/PageHeader'
 import StatusBadge from '@/components/shared/StatusBadge'
 import { formatDate, formatCurrency } from '@/lib/utils'
 import { FormSkeleton } from '@/components/shared/SkeletonLoaders'
+import { MODULES } from '@/lib/accessControl'
 
 function InfoCard({ icon: Icon, label, value }) {
   return (
@@ -61,7 +62,7 @@ export default function CustomerViewPage() {
         title={customer.name}
         description={`Customer ID: ${customer.id}`}
         backTo="/customers"
-        action={{ label: 'Edit', to: `/customers/${id}/edit` }}
+        action={{ label: 'Edit', to: `/customers/${id}/edit`, module: MODULES.CUSTOMER, permission: 'edit_records' }}
       />
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">

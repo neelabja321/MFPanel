@@ -7,10 +7,14 @@ import DataTableLayout from '@/components/shared/DataTableLayout'
 import PageHeader from '@/components/shared/PageHeader'
 import ActionButtons from '@/components/shared/ActionButtons'
 import { formatDate } from '@/lib/utils'
+import { useAuthStore } from '@/store'
+import { canAccess, MODULES, PERMISSIONS } from '@/lib/accessControl'
 
 export default function RolesList() {
   const [search, setSearch] = useState('')
   const navigate = useNavigate()
+  const permissions = useAuthStore((state) => state.permissions)
+  const mayEditAccess = canAccess(permissions, MODULES.ADMINISTRATOR, PERMISSIONS.EDIT)
 
   // Assuming roleService.getAll() returns an array of roles.
   // Fallback to empty array to handle any differences in response shape.
@@ -20,7 +24,10 @@ export default function RolesList() {
   })
 
   // Ensure it's an array for frontend
-  const rolesData = Array.isArray(rawRoles) ? rawRoles : rawRoles?.data || []
+  const rolesData = useMemo(
+    () => (Array.isArray(rawRoles) ? rawRoles : rawRoles?.data || []),
+    [rawRoles]
+  )
 
   const roles = useMemo(() => {
     let result = rolesData
@@ -73,14 +80,17 @@ export default function RolesList() {
       width: 140,
       render: (_, row) => (
         <div className="flex items-center justify-end gap-1">
-          <button
-            title="Set up access matrix"
-            onClick={() => navigate(`/roles/${row.roleId}/access`)}
-            className="p-1.5 rounded-lg text-muted-foreground hover:bg-primary/10 hover:text-primary transition-colors"
-          >
-            <ShieldCheck className="w-4 h-4" />
-          </button>
+          {mayEditAccess && (
+            <button
+              title="Set up access matrix"
+              onClick={() => navigate(`/roles/${row.roleId}/access`)}
+              className="p-1.5 rounded-lg text-muted-foreground hover:bg-primary/10 hover:text-primary transition-colors"
+            >
+              <ShieldCheck className="w-4 h-4" />
+            </button>
+          )}
           <ActionButtons
+            module={MODULES.ADMINISTRATOR}
             viewTo={`/roles/${row.roleId}`}
             editTo={`/roles/${row.roleId}/edit`}
             onDelete={undefined}
@@ -95,7 +105,7 @@ export default function RolesList() {
       <PageHeader
         title="Role Management"
         description="Manage system roles and their access matrices"
-        action={{ label: 'Create Role', to: '/roles/create' }}
+        action={{ label: 'Create Role', to: '/roles/create', module: MODULES.ADMINISTRATOR }}
       />
       <DataTableLayout
         columns={columns}

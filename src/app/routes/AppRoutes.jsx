@@ -2,10 +2,11 @@ import { lazy, Suspense } from 'react'
 import { Routes, Route } from 'react-router-dom'
 import MainLayout from '../layouts/MainLayout'
 import ProtectedRoute from './ProtectedRoute'
+import { PermissionRoute, HomeRoute, AccessDeniedPage } from './PermissionRoute'
 import LoginPage from '@/features/auth/LoginPage'
 import { CardSkeleton } from '@/components/shared/SkeletonLoaders'
+import { MODULES, PERMISSIONS } from '@/lib/accessControl'
 
-// Lazy-loaded pages
 const Dashboard = lazy(() => import('@/features/dashboard/DashboardPage'))
 const CustomersList = lazy(() => import('@/pages/Customer/List'))
 const CustomerCreate = lazy(() => import('@/pages/Customer/Create'))
@@ -40,127 +41,62 @@ function PageLoader() {
   )
 }
 
+function page(Component, module, permission = PERMISSIONS.LIST) {
+  return (
+    <PermissionRoute module={module} permission={permission}>
+      <Suspense fallback={<PageLoader />}><Component /></Suspense>
+    </PermissionRoute>
+  )
+}
+
 export default function AppRoutes() {
   return (
     <Routes>
       <Route path="/login" element={<LoginPage />} />
-      
+
       <Route element={<ProtectedRoute />}>
         <Route element={<MainLayout />}>
           <Route
-          path="/"
-          element={
-            <Suspense fallback={<PageLoader />}>
-              <Dashboard />
-            </Suspense>
-          }
-        />
-        
-        {/* Customers */}
-        <Route
-          path="/customers"
-          element={<Suspense fallback={<PageLoader />}><CustomersList /></Suspense>}
-        />
-        <Route
-          path="/customers/create"
-          element={<Suspense fallback={<PageLoader />}><CustomerCreate /></Suspense>}
-        />
-        <Route
-          path="/customers/:id/edit"
-          element={<Suspense fallback={<PageLoader />}><CustomerEdit /></Suspense>}
-        />
-        <Route
-          path="/customers/:id"
-          element={<Suspense fallback={<PageLoader />}><CustomerView /></Suspense>}
-        />
+            path="/"
+            element={(
+              <HomeRoute>
+                <Suspense fallback={<PageLoader />}><Dashboard /></Suspense>
+              </HomeRoute>
+            )}
+          />
+          <Route path="/access-denied" element={<AccessDeniedPage />} />
 
-        {/* Loans */}
-        <Route
-          path="/loans"
-          element={<Suspense fallback={<PageLoader />}><LoansList /></Suspense>}
-        />
-        <Route
-          path="/loans/create"
-          element={<Suspense fallback={<PageLoader />}><LoanCreate /></Suspense>}
-        />
-        <Route
-          path="/loans/:id/edit"
-          element={<Suspense fallback={<PageLoader />}><LoanEdit /></Suspense>}
-        />
-        <Route
-          path="/loans/:id"
-          element={<Suspense fallback={<PageLoader />}><LoanView /></Suspense>}
-        />
+          <Route path="/customers" element={page(CustomersList, MODULES.CUSTOMER)} />
+          <Route path="/customers/create" element={page(CustomerCreate, MODULES.CUSTOMER, PERMISSIONS.CREATE)} />
+          <Route path="/customers/:id/edit" element={page(CustomerEdit, MODULES.CUSTOMER, PERMISSIONS.EDIT)} />
+          <Route path="/customers/:id" element={page(CustomerView, MODULES.CUSTOMER)} />
 
-        {/* Savings */}
-        <Route
-          path="/savings"
-          element={<Suspense fallback={<PageLoader />}><SavingsList /></Suspense>}
-        />
-        <Route
-          path="/savings/create"
-          element={<Suspense fallback={<PageLoader />}><SavingsCreate /></Suspense>}
-        />
+          <Route path="/loans" element={page(LoansList, MODULES.LOAN)} />
+          <Route path="/loans/create" element={page(LoanCreate, MODULES.LOAN, PERMISSIONS.CREATE)} />
+          <Route path="/loans/:id/edit" element={page(LoanEdit, MODULES.LOAN, PERMISSIONS.EDIT)} />
+          <Route path="/loans/:id" element={page(LoanView, MODULES.LOAN)} />
 
-        {/* Groups */}
-        <Route
-          path="/groups"
-          element={<Suspense fallback={<PageLoader />}><GroupsList /></Suspense>}
-        />
-        <Route
-          path="/groups/create"
-          element={<Suspense fallback={<PageLoader />}><GroupCreate /></Suspense>}
-        />
-        <Route
-          path="/groups/:id/edit"
-          element={<Suspense fallback={<PageLoader />}><GroupEdit /></Suspense>}
-        />
+          <Route path="/savings" element={page(SavingsList, MODULES.DEPOSIT)} />
+          <Route path="/savings/create" element={page(SavingsCreate, MODULES.DEPOSIT, PERMISSIONS.CREATE)} />
 
-        {/* Transactions */}
-        <Route
-          path="/transactions"
-          element={<Suspense fallback={<PageLoader />}><TransactionsList /></Suspense>}
-        />
+          <Route path="/groups" element={page(GroupsList, MODULES.GROUP)} />
+          <Route path="/groups/create" element={page(GroupCreate, MODULES.GROUP, PERMISSIONS.CREATE)} />
+          <Route path="/groups/:id/edit" element={page(GroupEdit, MODULES.GROUP, PERMISSIONS.EDIT)} />
 
-        {/* Users */}
-        <Route
-          path="/users"
-          element={<Suspense fallback={<PageLoader />}><UsersList /></Suspense>}
-        />
-        <Route
-          path="/users/create"
-          element={<Suspense fallback={<PageLoader />}><UserCreate /></Suspense>}
-        />
-        <Route
-          path="/users/:id/edit"
-          element={<Suspense fallback={<PageLoader />}><UserEdit /></Suspense>}
-        />
+          <Route path="/transactions" element={page(TransactionsList, [MODULES.DEPOSIT, MODULES.LOAN])} />
 
-        {/* Roles */}
-        <Route
-          path="/roles"
-          element={<Suspense fallback={<PageLoader />}><RolesList /></Suspense>}
-        />
-        <Route
-          path="/roles/create"
-          element={<Suspense fallback={<PageLoader />}><RoleCreate /></Suspense>}
-        />
-        <Route
-          path="/roles/:id/edit"
-          element={<Suspense fallback={<PageLoader />}><RoleEdit /></Suspense>}
-        />
-        <Route
-          path="/roles/:id/access"
-          element={<Suspense fallback={<PageLoader />}><RoleAccessMatrix /></Suspense>}
-        />
-        <Route
-          path="/roles/:id"
-          element={<Suspense fallback={<PageLoader />}><RoleView /></Suspense>}
-        />
+          <Route path="/users" element={page(UsersList, MODULES.ADMINISTRATOR)} />
+          <Route path="/users/create" element={page(UserCreate, MODULES.ADMINISTRATOR, PERMISSIONS.CREATE)} />
+          <Route path="/users/:id/edit" element={page(UserEdit, MODULES.ADMINISTRATOR, PERMISSIONS.EDIT)} />
+
+          <Route path="/roles" element={page(RolesList, MODULES.ADMINISTRATOR)} />
+          <Route path="/roles/create" element={page(RoleCreate, MODULES.ADMINISTRATOR, PERMISSIONS.CREATE)} />
+          <Route path="/roles/:id/edit" element={page(RoleEdit, MODULES.ADMINISTRATOR, PERMISSIONS.EDIT)} />
+          <Route path="/roles/:id/access" element={page(RoleAccessMatrix, MODULES.ADMINISTRATOR, PERMISSIONS.EDIT)} />
+          <Route path="/roles/:id" element={page(RoleView, MODULES.ADMINISTRATOR)} />
         </Route>
       </Route>
 
-      {/* Developer Docs (Unprotected) */}
       <Route
         path="/api-docs"
         element={<Suspense fallback={<PageLoader />}><ApiDocs /></Suspense>}

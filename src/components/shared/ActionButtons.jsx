@@ -1,13 +1,19 @@
 import { useNavigate } from 'react-router-dom'
 import { Eye, Pencil, Trash2 } from 'lucide-react'
 import ConfirmDialog from './ConfirmDialog'
+import { useAuthStore } from '@/store'
+import { canAccess } from '@/lib/accessControl'
 
-export default function ActionButtons({ viewTo, editTo, onDelete, disabled }) {
+export default function ActionButtons({ viewTo, editTo, onDelete, disabled, module }) {
   const navigate = useNavigate()
+  const permissions = useAuthStore((state) => state.permissions)
+  const mayView = !module || canAccess(permissions, module, 'list')
+  const mayEdit = !module || canAccess(permissions, module, 'edit_records')
+  const mayDelete = !module || canAccess(permissions, module, 'delete_records')
 
   return (
     <div className="flex items-center gap-1">
-      {viewTo && (
+      {viewTo && mayView && (
         <button
           title="View"
           onClick={() => navigate(viewTo)}
@@ -16,7 +22,7 @@ export default function ActionButtons({ viewTo, editTo, onDelete, disabled }) {
           <Eye className="w-4 h-4" />
         </button>
       )}
-      {editTo && (
+      {editTo && mayEdit && (
         <button
           title="Edit"
           onClick={() => navigate(editTo)}
@@ -25,7 +31,7 @@ export default function ActionButtons({ viewTo, editTo, onDelete, disabled }) {
           <Pencil className="w-4 h-4" />
         </button>
       )}
-      {onDelete && (
+      {onDelete && mayDelete && (
         <ConfirmDialog
           onConfirm={onDelete}
           trigger={

@@ -2,7 +2,7 @@ import { forwardRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { cn } from '@/lib/utils'
 
-export default function FormLayout({ title, description, onSubmit, loading, backTo, children, submitLabel }) {
+export default function FormLayout({ title, description, onSubmit, loading, disabled, backTo, children, submitLabel }) {
   const navigate = useNavigate()
 
   return (
@@ -28,10 +28,10 @@ export default function FormLayout({ title, description, onSubmit, loading, back
             )}
             <button
               type="submit"
-              disabled={loading}
+              disabled={loading || disabled}
               className={cn(
                 'px-6 py-2 bg-primary text-primary-foreground rounded-xl text-sm font-semibold hover:bg-primary/90 transition-colors shadow-sm disabled:opacity-60',
-                loading && 'cursor-not-allowed'
+                (loading || disabled) && 'cursor-not-allowed'
               )}
             >
               {loading ? 'Saving...' : (submitLabel || 'Save')}

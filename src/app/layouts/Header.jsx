@@ -18,6 +18,7 @@ export default function Header() {
   const { toggleSidebar, theme, toggleTheme } = useUIStore()
   const logout = useAuthStore((s) => s.logout)
   const user = useAuthStore((s) => s.user)
+  const roleName = useAuthStore((s) => s.roleName)
   const location = useLocation()
   const navigate = useNavigate()
 
@@ -70,7 +71,9 @@ export default function Header() {
           </div>
           <div className="hidden sm:block">
             <p className="text-sm font-medium text-foreground leading-tight">{user?.name || 'User'}</p>
-            <p className="text-xs text-muted-foreground leading-tight">{user?.isAdmin ? 'Admin' : 'Staff'}</p>
+            <p className="text-xs text-muted-foreground leading-tight">
+              {roleName || (Number(user?.isAdmin) === 1 ? 'Admin' : 'Staff')}
+            </p>
           </div>
           <button 
             onClick={handleLogout}

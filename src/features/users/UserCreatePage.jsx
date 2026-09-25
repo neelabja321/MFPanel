@@ -4,6 +4,7 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { userService } from '@/services/userService'
+import { useRoleOptions } from '@/hooks/useRoleOptions'
 import PageHeader from '@/components/shared/PageHeader'
 import FormLayout, { FormField, FormInput, FormSelect } from '@/components/shared/FormLayout'
 
@@ -20,10 +21,12 @@ const schema = z.object({
 export default function UserCreatePage() {
   const navigate = useNavigate()
   const queryClient = useQueryClient()
+  const { roles, isLoading: rolesLoading, isError: rolesError, refetch: refetchRoles } = useRoleOptions()
+  const activeRoles = roles.filter((role) => role.status === 1)
 
   const { register, handleSubmit, formState: { errors } } = useForm({
     resolver: zodResolver(schema),
-    defaultValues: { isAdmin: 2, roleId: 3, branch_id: 1 },
+    defaultValues: { isAdmin: 2, roleId: '', branch_id: 1 },
   })
 
   const mutation = useMutation({
@@ -35,26 +38,28 @@ export default function UserCreatePage() {
   })
 
   const onSubmit = (data) => mutation.mutate(data)
+  const roleSelectionUnavailable = rolesLoading || rolesError || activeRoles.length === 0
 
   return (
     <div className="animate-fade-in space-y-6">
       <PageHeader title="Add User" description="Create a new staff account" />
-      <FormLayout onSubmit={handleSubmit(onSubmit)} loading={mutation.isPending} onCancel={() => navigate('/users')} submitLabel="Create User" backTo="/users">
-        
-        {/* Basic Information */}
+      <FormLayout
+        onSubmit={handleSubmit(onSubmit)}
+        loading={mutation.isPending}
+        disabled={roleSelectionUnavailable}
+        submitLabel="Create User"
+        backTo="/users"
+      >
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <FormField label="Full Name" error={errors.name?.message} required>
             <FormInput {...register('name')} placeholder="e.g. John Doe" error={errors.name} />
           </FormField>
-          
           <FormField label="Email Address" error={errors.email?.message} required>
             <FormInput type="email" {...register('email')} placeholder="john@example.com" error={errors.email} />
           </FormField>
-
           <FormField label="Password" error={errors.password?.message} required>
             <FormInput type="password" {...register('password')} placeholder="••••••••" error={errors.password} />
           </FormField>
-
           <FormField label="Mobile" error={errors.mobile?.message} required>
             <FormInput type="text" {...register('mobile')} placeholder="9876543210" error={errors.mobile} />
           </FormField>
@@ -62,14 +67,24 @@ export default function UserCreatePage() {
 
         <hr className="my-6 border-slate-200" />
 
-        {/* Roles & Permissions */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <FormField label="Role" error={errors.roleId?.message} required>
-            <FormSelect {...register('roleId')} error={errors.roleId}>
-              <option value="1">System Administrator</option>
-              <option value="2">Manager</option>
-              <option value="3">Employee</option>
-              <option value="12">Data Entry Operator</option>
+          <FormField
+            label="Role"
+            error={errors.roleId?.message}
+            hint="Roles are loaded from the role access-matrix configuration."
+            required
+          >
+            <FormSelect
+              {...register('roleId')}
+              error={errors.roleId}
+              disabled={roleSelectionUnavailable}
+            >
+              <option value="">
+                {rolesLoading ? 'Loading roles...' : 'Select a role'}
+              </option>
+              {activeRoles.map((role) => (
+                <option key={role.id} value={role.id}>{role.label}</option>
+              ))}
             </FormSelect>
           </FormField>
 
@@ -88,12 +103,25 @@ export default function UserCreatePage() {
             </FormSelect>
           </FormField>
         </div>
-        
+
+        {rolesError && (
+          <div className="mt-4 p-3 bg-amber-50 text-amber-800 rounded-lg text-sm">
+            Roles could not be loaded.{' '}
+            <button type="button" onClick={() => refetchRoles()} className="font-semibold underline">
+              Retry
+            </button>
+          </div>
+        )}
+        {!rolesLoading && !rolesError && activeRoles.length === 0 && (
+          <div className="mt-4 p-3 bg-amber-50 text-amber-800 rounded-lg text-sm">
+            No active roles are available. Create or activate a role before adding a user.
+          </div>
+        )}
         {mutation.isError && (
           <div className="mt-4 p-3 bg-red-50 text-red-600 rounded-lg text-sm">
-            {mutation.error?.response?.data?.errors 
-              ? Object.values(mutation.error.response.data.errors).flat().join(', ') 
-              : (mutation.error?.response?.data?.message || mutation.error?.message || "Failed to create user.")}
+            {mutation.error?.response?.data?.errors
+              ? Object.values(mutation.error.response.data.errors).flat().join(', ')
+              : (mutation.error?.response?.data?.message || mutation.error?.message || 'Failed to create user.')}
           </div>
         )}
       </FormLayout>

@@ -7,12 +7,15 @@ import DataTableLayout from '@/components/shared/DataTableLayout'
 import PageHeader from '@/components/shared/PageHeader'
 import ActionButtons from '@/components/shared/ActionButtons'
 import { formatDate } from '@/lib/utils'
+import { MODULES } from '@/lib/accessControl'
+import { useRoleOptions } from '@/hooks/useRoleOptions'
 
 export default function UsersPage() {
   const [search, setSearch] = useState('')
   const [roleFilter, setRoleFilter] = useState('')
   const [statusFilter, setStatusFilter] = useState('')
   const queryClient = useQueryClient()
+  const { roles } = useRoleOptions()
 
   // Fetch all users directly from the API endpoint
   const { data: rawUsers = [], isLoading } = useQuery({
@@ -156,6 +159,7 @@ export default function UsersPage() {
       width: 80,
       render: (_, row) => (
         <ActionButtons
+          module={MODULES.ADMINISTRATOR}
           editTo={`/users/${row.userId}/edit`}
           onDelete={() => deleteMutation.mutateAsync(row.userId)}
         />
@@ -168,7 +172,7 @@ export default function UsersPage() {
       <PageHeader
         title="System Users"
         description="Manage system users and access levels"
-        action={{ label: 'Add User', to: '/users/create' }}
+        action={{ label: 'Add User', to: '/users/create', module: MODULES.ADMINISTRATOR }}
         onExport={() => exportToExcel(users, columns, 'users.xlsx')}
         onPrint={handlePrint}
       />
@@ -190,10 +194,9 @@ export default function UsersPage() {
               className="text-sm rounded-xl border border-input bg-background px-3 py-2 outline-none focus:ring-2 focus:ring-primary shadow-sm"
             >
               <option value="">All Roles</option>
-              <option value="1">System Administrator</option>
-              <option value="2">Manager</option>
-              <option value="3">Employee</option>
-              <option value="12">Data Entry Operator</option>
+              {roles.map((role) => (
+                <option key={role.id} value={role.id}>{role.label}</option>
+              ))}
             </select>
             <select
               value={statusFilter}

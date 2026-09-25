@@ -10,6 +10,7 @@ import PageHeader from '@/components/shared/PageHeader'
 import StatusBadge from '@/components/shared/StatusBadge'
 import ActionButtons from '@/components/shared/ActionButtons'
 import { formatCurrency, formatDate } from '@/lib/utils'
+import { MODULES } from '@/lib/accessControl'
 
 export default function LoansPage() {
   const [search, setSearch] = useState('')
@@ -79,6 +80,7 @@ export default function LoansPage() {
       width: 80,
       render: (_, row) => (
         <ActionButtons
+          module={MODULES.LOAN}
           viewTo={`/loans/${row.id}`}
           editTo={`/loans/${row.id}/edit`}
           onDelete={() => deleteMutation.mutateAsync(row.id)}
@@ -92,7 +94,7 @@ export default function LoansPage() {
       <PageHeader
         title="Loans"
         description={`${loans.length} loan records`}
-        action={{ label: 'Add Loan', to: '/loans/create' }}
+        action={{ label: 'Add Loan', to: '/loans/create', module: MODULES.LOAN }}
         onExport={() => exportToExcel(loans, columns, 'loans.xlsx')}
         onPrint={() => window.print()}
       />

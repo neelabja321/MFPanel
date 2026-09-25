@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { exportToExcel } from '@/lib/exportUtils'
-import { PiggyBank, TrendingUp, TrendingDown } from 'lucide-react'
+import { PiggyBank } from 'lucide-react'
 import { savingsService } from '@/services/savingsService'
 import { customerService } from '@/services/customerService'
 import { groupService } from '@/services/groupService'
@@ -9,6 +9,7 @@ import DataTableLayout from '@/components/shared/DataTableLayout'
 import PageHeader from '@/components/shared/PageHeader'
 import StatusBadge from '@/components/shared/StatusBadge'
 import { formatCurrency, formatDate } from '@/lib/utils'
+import { MODULES } from '@/lib/accessControl'
 
 export default function SavingsPage() {
   const [groupFilter, setGroupFilter] = useState('')
@@ -59,7 +60,7 @@ export default function SavingsPage() {
       <PageHeader
         title="Savings"
         description="Member savings accounts"
-        action={{ label: 'Open Account', to: '/savings/create' }}
+        action={{ label: 'Open Account', to: '/savings/create', module: MODULES.DEPOSIT }}
         onExport={() => exportToExcel(savings, columns, 'savings.xlsx')}
         onPrint={() => window.print()}
       />

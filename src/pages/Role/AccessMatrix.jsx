@@ -14,11 +14,14 @@ import {
   countEnabledModules,
 } from '@/lib/accessMatrix'
 import { getApiError } from '@/lib/utils'
+import { useAuthStore } from '@/store'
 
 export default function RoleAccessMatrix() {
   const { id } = useParams()
   const navigate = useNavigate()
   const queryClient = useQueryClient()
+  const signedInRoleId = useAuthStore((state) => state.roleId)
+  const retryPermissions = useAuthStore((state) => state.retryPermissions)
   const [accessMatrix, setAccessMatrix] = useState([])
 
   const {
@@ -63,6 +66,7 @@ export default function RoleAccessMatrix() {
     mutationFn: (access) => roleService.updateAccessMatrix(id, access),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['role-access', id] })
+      if (Number(id) === Number(signedInRoleId)) retryPermissions()
       toast.success('Access matrix updated successfully')
       navigate(`/roles/${id}`)
     },
