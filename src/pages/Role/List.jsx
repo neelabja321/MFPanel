@@ -70,7 +70,7 @@ export default function RolesList() {
     {
       key: 'actions',
       label: '',
-      width: 110,
+      width: 140,
       render: (_, row) => (
         <div className="flex items-center justify-end gap-1">
           <button
@@ -80,7 +80,11 @@ export default function RolesList() {
           >
             <ShieldCheck className="w-4 h-4" />
           </button>
-          <ActionButtons editTo={`/roles/${row.roleId}/edit`} onDelete={undefined} />
+          <ActionButtons
+            viewTo={`/roles/${row.roleId}`}
+            editTo={`/roles/${row.roleId}/edit`}
+            onDelete={undefined}
+          />
         </div>
       ),
     },

@@ -27,6 +27,7 @@ const UserEdit = lazy(() => import('@/features/users/UserEditPage'))
 const RolesList = lazy(() => import('@/pages/Role/List'))
 const RoleCreate = lazy(() => import('@/pages/Role/Create'))
 const RoleEdit = lazy(() => import('@/pages/Role/Edit'))
+const RoleView = lazy(() => import('@/pages/Role/View'))
 const RoleAccessMatrix = lazy(() => import('@/pages/Role/AccessMatrix'))
 const ApiDocs = lazy(() => import('@/features/docs/ApiDocsPage'))
 
@@ -151,6 +152,10 @@ export default function AppRoutes() {
         <Route
           path="/roles/:id/access"
           element={<Suspense fallback={<PageLoader />}><RoleAccessMatrix /></Suspense>}
+        />
+        <Route
+          path="/roles/:id"
+          element={<Suspense fallback={<PageLoader />}><RoleView /></Suspense>}
         />
         </Route>
       </Route>

@@ -1,4 +1,5 @@
 import { create } from 'zustand'
+import { clearRoleAccessMatrixCache } from '@/lib/accessMatrix'
 
 export const useUIStore = create((set) => ({
   sidebarOpen: window.innerWidth >= 768,
@@ -31,12 +32,15 @@ export const useAuthStore = create((set) => ({
   user: JSON.parse(localStorage.getItem('authUser') || 'null'),
   
   setAuth: (user, token) => {
+    // Cached permissions belong to the previous authentication context.
+    clearRoleAccessMatrixCache()
     localStorage.setItem('authToken', token)
     localStorage.setItem('authUser', JSON.stringify(user))
     set({ isAuthenticated: true, user })
   },
   
   logout: () => {
+    clearRoleAccessMatrixCache()
     localStorage.removeItem('authToken')
     localStorage.removeItem('authUser')
     set({ isAuthenticated: false, user: null })
